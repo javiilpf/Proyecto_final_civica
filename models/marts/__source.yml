@@ -1,0 +1,205 @@
+version: 2
+
+sources:
+  - name: GOLD
+    database: DEV_GOLD_DB
+    tables:
+      - name: DIM_CICLISTA
+        columns:
+          - name: SK_CICLISTA
+            data_type: NUMBER
+
+          - name: ID_CICLISTA
+            data_type: NUMBER
+
+          - name: NOMBRE
+            data_type: VARCHAR
+
+          - name: GENERO
+            data_type: VARCHAR
+
+          - name: CATEGORIA
+            data_type: VARCHAR
+
+          - name: PAIS
+            data_type: VARCHAR
+
+          - name: BICI_MARCA
+            data_type: VARCHAR
+
+          - name: BICI_MODELO
+            data_type: VARCHAR
+
+          - name: PALMARES_VICTORIAS
+            data_type: NUMBER
+
+          - name: ESTILO_PEDALEO
+            data_type: VARCHAR
+
+          - name: LATERALIDAD
+            data_type: VARCHAR
+
+          - name: ANOS_EXPERIENCIA
+            data_type: NUMBER
+
+          - name: VIGENTE
+            data_type: BOOLEAN
+      - name: DIM_COMPETICION
+        columns:
+          - name: SK_COMPETICION
+            data_type: NUMBER
+
+          - name: ID_COMPETICION
+            data_type: NUMBER
+
+          - name: NOMBRE
+            data_type: VARCHAR
+
+          - name: PAIS
+            data_type: VARCHAR
+
+          - name: DISTANCIA_TOTAL_KM
+            data_type: FLOAT
+
+          - name: NUM_PARTICIPANTES
+            data_type: NUMBER
+
+          - name: NIVEL
+            data_type: VARCHAR
+
+          - name: PRESUPUESTO_PREMIOS
+            data_type: FLOAT
+
+          - name: ALTITUD_MEDIA
+            data_type: FLOAT
+
+          - name: DIFICULTAD_TECNICA
+            data_type: NUMBER
+
+          - name: VALORACION_CORREDORES
+            data_type: FLOAT
+
+          - name: TRANSMISION_ONLINE
+            data_type: BOOLEAN
+
+          - name: PATROCINADOR_LOCAL
+            data_type: VARCHAR
+
+      - name: DIM_ETAPA
+        columns:
+          - name: SK_ETAPA
+            data_type: NUMBER
+
+          - name: ID_ETAPA
+            data_type: NUMBER
+
+          - name: NOMBRE
+            data_type: VARCHAR
+
+          - name: NUM_TRAMOS_TECNICOS
+            data_type: NUMBER
+
+          - name: NUM_PUERTOS
+            data_type: NUMBER
+
+          - name: ALTITUD_MEDIA
+            data_type: FLOAT
+
+          - name: INDICE_EXPOSICION_CALOR
+            data_type: FLOAT
+
+          - name: SUPERFICIE_PREDOMINANTE
+            data_type: VARCHAR
+
+          - name: FACTOR_RIESGO_DESCENSO
+            data_type: FLOAT
+
+          - name: PUNTOS_ABASTECIMIENTO
+            data_type: NUMBER
+      - name: DIM_TIEMPO
+        columns:
+          - name: SK_FECHA
+            data_type: NUMBER
+
+          - name: FECHA
+            data_type: DATE
+
+          - name: ANIO
+            data_type: NUMBER
+
+          - name: TRIMESTRE
+            data_type: NUMBER
+
+          - name: MES
+            data_type: NUMBER
+
+          - name: NOMBRE_MES
+            data_type: VARCHAR
+
+          - name: SEMANA_ANIO
+            data_type: NUMBER
+
+          - name: DIA_SEMANA
+            data_type: NUMBER
+
+          - name: NOMBRE_DIA
+            data_type: VARCHAR
+
+          - name: ES_FIN_SEMANA
+            data_type: BOOLEAN
+
+      - name: FACT_CARRERA
+        columns:
+          - name: SK_FACT
+            data_type: NUMBER
+
+          - name: SK_CICLISTA
+            data_type: NUMBER
+
+          - name: SK_ETAPA
+            data_type: NUMBER
+
+          - name: SK_COMPETICION
+            data_type: NUMBER
+
+          - name: SK_FECHA
+            data_type: NUMBER
+
+          - name: POSICION
+            data_type: NUMBER
+
+          - name: TIEMPO_SEG
+            data_type: NUMBER
+
+          - name: EFICIENCIA_ENERGETICA
+            data_type: FLOAT
+
+          - name: INDICE_PACING
+            data_type: FLOAT
+
+          - name: PENALIZACION_SEG
+            data_type: NUMBER
+
+          - name: CAIDAS
+            data_type: NUMBER
+
+          - name: POTENCIA_MEDIA
+            data_type: FLOAT
+
+          - name: CADENCIA_MEDIA
+            data_type: FLOAT
+
+          - name: CTL
+            data_type: FLOAT
+
+          - name: ATL
+            data_type: FLOAT
+
+          - name: TSB
+            data_type: FLOAT
+
+          - name: HRV
+            data_type: FLOAT
+
+          - name: TSS
+            data_type: FLOAT
