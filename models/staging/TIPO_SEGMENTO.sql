@@ -2,14 +2,14 @@ with
 
 source as (
 
-    select * from {{ source('SILVER', 'TIPO_TERRENO') }}
+    select tipo_segmento from {{ ref('stg_segmento_trayecto') }}
 
 ),
 
 renamed as (
 
     select
-
+        *
     from source
 
 )
