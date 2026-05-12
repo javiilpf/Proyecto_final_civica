@@ -2,10 +2,10 @@ with source as (
     select * from {{ ref('stg_segmento_trayecto') }}
 ),
 telemetria_vuelta as (
-    select id_telemetria, _id_bronze from {{ ref('telemetria_vuelta') }}
+    select id_telemetria, _id_bronze from {{ ref('TELEMETRIA_VUELTA') }}
 ),
 tipo_segmento as (
-    select id_tipo_segmento, codigo from {{ ref('tipo_segmento') }}
+    select id_tipo_segmento, codigo from {{ ref('TIPO_SEGMENTO') }}
 ),
 renamed as (
     select
