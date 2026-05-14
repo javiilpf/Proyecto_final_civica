@@ -29,4 +29,7 @@ normalizado as (
     from source
     where upper(trim(nombre_raw)) not in ('EUROPA', 'VARIOS', 'KENYA/GB', 'MAN/GB')
 )
-select * from normalizado
+select
+    row_number() over (order by nombre) as id_pais,
+    nombre
+from normalizado
