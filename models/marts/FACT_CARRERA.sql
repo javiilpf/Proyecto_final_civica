@@ -35,7 +35,6 @@ forma_fisica as (
     from {{ ref('FORMA_FISICA') }}
 ),
 
--- SKs de dimensiones
 dim_ciclista as (
     select SK_CICLISTA, ID_CICLISTA from {{ ref('DIM_CICLISTA') }}
 ),
