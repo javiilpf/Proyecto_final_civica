@@ -56,8 +56,11 @@ models:
     # actualizados al consultar). Apuntan a la BD SILVER del entorno
     staging:
       +materialized: view
-      +database: "{{ env_var('DBT_ENVIRONMENTS', 'FAIL') }}_SILVER_DB"
+      +database: "DEV_SILVER_DB"
 
+     #   staging:
+     # +materialized: view
+     # +database: "{{ env_var('DBT_ENVIRONMENTS', 'FAIL') }}_SILVER_DB"
     # COPIAR DEL SCHEMA ANTERIOR CUANDO CREE LOS MODELOS ANTERIORES
 
     # ------------------------------------------------------------------------
@@ -68,7 +71,7 @@ models:
     # ------------------------------------------------------------------------
     marts:
       +materialized: table
-      +database: "{{ env_var('DBT_ENVIRONMENTS', 'FAIL') }}_GOLD_DB"
+      +database: "DEV_GOLD_DB"
 
       # core:
       #   +schema: core

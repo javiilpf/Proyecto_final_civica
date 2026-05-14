@@ -24,7 +24,8 @@ models:
         tests:
           - not_null
           - accepted_values:
-              values: ['Europa', 'América', 'Asia', 'África', 'Oceanía']
+              arguments:
+                values: ['Europa', 'América', 'Asia', 'África', 'Oceanía']
 
   - name: CATEGORIA_UCI
     description: >
@@ -81,7 +82,8 @@ models:
         tests:
           - not_null
           - accepted_values:
-              values: ['MTB', 'Ruta', 'Ciclocross', 'Pista', 'BMX', 'Gravel']
+              arguments:
+                values: ['MTB', 'Ruta', 'Ciclocross', 'Pista', 'BMX', 'Gravel']
 
   - name: TIPO_TERRENO
     description: >
@@ -122,13 +124,15 @@ models:
         tests:
           - not_null
           - accepted_values:
-              values: [true, false]
+              arguments:
+                values: [true, false]
       - name: REQUIERE_DESCENSO
         description: "Boolean que indica sobre descensos considerables"
         tests:
           - not_null
           - accepted_values:
-              values: [true, false]
+              arguments:
+                values: [true, false]
 
 
   - name: EQUIPO
@@ -149,16 +153,18 @@ models:
         tests:
           - not_null
           - relationships:
-              to: ref('PAIS')
-              field: ID_PAIS
+              arguments:
+                to: ref('PAIS')
+                field: ID_PAIS
 
       - name: ID_CATEGORIA_UCI
         description: "FK a la categoría UCI del equipo"
         tests:
           - not_null
           - relationships:
-              to: ref('CATEGORIA_UCI')
-              field: ID_CATEGORIA
+              arguments:
+                to: ref('CATEGORIA_UCI')
+                field: ID_CATEGORIA
       - name: NOMBRE
         description: "Nombre oficial del equipo"
         tests: [not_null, unique]
@@ -176,7 +182,8 @@ models:
         tests:
           - not_null
           - accepted_values:
-              values: ['MTB', 'Ruta', 'Ciclocross', 'Pista', 'BMX', 'Gravel']
+              arguments:
+                values: ['MTB', 'Ruta', 'Ciclocross', 'Pista', 'BMX', 'Gravel']
       - name: PATROCINADOR_PPAL
         description: "Nombre del patrocinador principal del equipo"
         tests: [not_null]
@@ -185,7 +192,8 @@ models:
         tests:
           - not_null
           - accepted_values:
-              values: [true, false]
+              arguments:
+                values: [true, false]
 
   - name: CICLISTA
     description: >
@@ -205,22 +213,25 @@ models:
         tests:
           - not_null
           - relationships:
-              to: ref('EQUIPO')
-              field: ID_EQUIPO
+              arguments:
+                to: ref('EQUIPO')
+                field: ID_EQUIPO
       - name: ID_NACIONALIDAD
         description: "FK al país del ciclista"
         tests:
           - not_null
           - relationships:
-              to: ref('PAIS')
-              field: ID_PAIS
+              arguments:
+                to: ref('PAIS')
+                field: ID_PAIS
       - name: ID_PAIS_RESIDENCIA
         description: "FK al país donde vive el ciclista"
         tests:
           - not_null
           - relationships:
-              to: ref('PAIS')
-              field: ID_PAIS
+              arguments:
+                to: ref('PAIS')
+                field: ID_PAIS
       - name: NOMBRE
         description: "Nombre"
         tests: [not_null]
@@ -241,7 +252,8 @@ models:
         tests:
           - not_null
           - accepted_values:
-              values: ['MTB', 'Ruta', 'Ciclocross', 'Pista', 'BMX', 'Gravel']
+              arguments:
+                values: ['MTB', 'Ruta', 'Ciclocross', 'Pista', 'BMX', 'Gravel']
       - name: ESPECIALIDAD
         description: "escalador, rodador, sprinter, etc."
         tests: [not_null]
@@ -250,13 +262,15 @@ models:
         tests:
           - not_null
           - accepted_values:
-              values: [true, false]
+              arguments:
+                values: [true, false]
       - name: GENERO
         description: "Género"
         tests:
           - not_null
           - accepted_values:
-              values: ['M', 'F', 'NB']
+              arguments:
+                values: ['M', 'F', 'NB']
       - name: CATEGORIA
         description: "Según la edad (Elite, Sub23, Junior, Master, etc.)"
         tests: [not_null]
@@ -277,7 +291,8 @@ models:
         tests:
           - not_null
           - accepted_values:
-              values: ['Diestro', 'Zurdo', 'Ambidiestro']
+              arguments:
+                values: ['Diestro', 'Zurdo', 'Ambidiestro']
       - name: ANOS_EXPERIENCIA
         description: "Experiencia en años"
         tests: [not_null]
@@ -300,29 +315,33 @@ models:
         tests:
           - not_null
           - relationships:
-              to: ref('TIPO_COMPETICION')
-              field: ID_TIPO
+              arguments:
+                to: ref('TIPO_COMPETICION')
+                field: ID_TIPO
       - name: ID_CATEGORIA_UCI
         description: "FK a la categoría UCI de la prueba"
         tests:
           - not_null
           - relationships:
-              to: ref('CATEGORIA_UCI')
-              field: ID_CATEGORIA
+              arguments:
+                to: ref('CATEGORIA_UCI')
+                field: ID_CATEGORIA
       - name: ID_PAIS
         description: "FK al país donde se celebra la competición"
         tests:
           - not_null
           - relationships:
-              to: ref('PAIS')
-              field: ID_PAIS
+              arguments:
+                to: ref('PAIS')
+                field: ID_PAIS
       - name: ID_NIVEL
         description: "FK al nivel de la competición"
         tests:
           - not_null
           - relationships:
-              to: ref('NIVEL_COMPETICION')
-              field: ID_NIVEL
+              arguments:
+                to: ref('NIVEL_COMPETICION')
+                field: ID_NIVEL
       - name: NOMBRE
         description: "Nombre oficial de la competición"
         tests: [not_null]
@@ -372,7 +391,8 @@ models:
         tests:
           - not_null
           - accepted_values:
-              values: [true, false]
+              arguments:
+                values: [true, false]
       - name: PATROCINADOR_LOCAL
         description: "Nombre del patrocinador local principal de la competición"
 
@@ -394,15 +414,17 @@ models:
         tests:
           - not_null
           - relationships:
-              to: ref('COMPETICION')
-              field: ID_COMPETICION
+              arguments:
+                to: ref('COMPETICION')
+                field: ID_COMPETICION
       - name: ID_TIPO_TERRENO
         description: "FK al tipo de terreno predominante en la etapa"
         tests:
           - not_null
           - relationships:
-              to: ref('TIPO_TERRENO')
-              field: ID_TERRENO
+              arguments:
+                to: ref('TIPO_TERRENO')
+                field: ID_TERRENO
       - name: ID_SUPERFICIE
         description: "FK al tipo de superficie del recorrido"
         tests: [not_null]
@@ -469,8 +491,9 @@ models:
         tests:
           - not_null
           - relationships:
-              to: ref('CICLISTA')
-              field: ID_CICLISTA
+              arguments:
+                to: ref('CICLISTA')
+                field: ID_CICLISTA
       - name: FECHA_MEDICION
         description: "Fecha en que se realizó la medición de forma física"
         tests: [not_null]
@@ -548,28 +571,32 @@ models:
         tests:
           - not_null
           - relationships:
-              to: ref('CICLISTA')
-              field: ID_CICLISTA
+              arguments:
+                to: ref('CICLISTA')
+                field: ID_CICLISTA
       - name: ID_COMPETICION
         description: "FK a la competición en la que se registra el resultado"
         tests:
           - not_null
           - relationships:
-              to: ref('COMPETICION')
-              field: ID_COMPETICION
+              arguments:
+                to: ref('COMPETICION')
+                field: ID_COMPETICION
       - name: ID_ETAPA
         description: "FK a la etapa específica del resultado (null si es resultado general)"
         tests:
           - relationships:
-              to: ref('ETAPA')
-              field: ID_ETAPA
+              arguments:
+                to: ref('ETAPA')
+                field: ID_ETAPA
       - name: ID_EQUIPO
         description: "FK al equipo con el que compite el ciclista en esta prueba"
         tests:
           - not_null
           - relationships:
-              to: ref('EQUIPO')
-              field: ID_EQUIPO
+              arguments:
+                to: ref('EQUIPO')
+                field: ID_EQUIPO
       - name: DORSAL
         description: "Número de dorsal del ciclista en la competición"
         tests: [not_null]
@@ -587,7 +614,8 @@ models:
         tests:
           - not_null
           - accepted_values:
-              values: [true, false]
+              arguments:
+                values: [true, false]
       - name: MOTIVO_ABANDONO
         description: "Motivo del abandono si aplica (caída, mecánica, enfermedad, etc.)"
       - name: PUNTOS_UCI
@@ -640,7 +668,8 @@ models:
         tests:
           - not_null
           - accepted_values:
-              values: [true, false]
+              arguments:
+                values: [true, false]
 
   - name: TELEMETRIA_VUELTA
     description: >
@@ -660,8 +689,9 @@ models:
         tests:
           - not_null
           - relationships:
-              to: ref('RESULTADO')
-              field: ID_RESULTADO
+              arguments:
+                to: ref('RESULTADO')
+                field: ID_RESULTADO
       - name: NUMERO_VUELTA
         description: "Número de vuelta al circuito dentro de la prueba"
         tests: [not_null]
@@ -746,15 +776,17 @@ models:
         tests:
           - not_null
           - relationships:
-              to: ref('TELEMETRIA_VUELTA')
-              field: ID_TELEMETRIA
+              arguments:
+                to: ref('TELEMETRIA_VUELTA')
+                field: ID_TELEMETRIA
       - name: ID_TIPO_SEGMENTO
         description: "FK al tipo de segmento (técnico, descenso, subida, llano, etc.)"
         tests:
           - not_null
           - relationships:
-              to: ref('TIPO_SEGMENTO')
-              field: ID_TIPO_SEGMENTO
+              arguments:
+                to: ref('TIPO_SEGMENTO')
+                field: ID_TIPO_SEGMENTO
       - name: NUMERO_SEGMENTO
         description: "Número de orden del segmento dentro de la vuelta"
         tests: [not_null]
@@ -803,22 +835,25 @@ models:
         tests:
           - not_null
           - relationships:
-              to: ref('RESULTADO')
-              field: ID_RESULTADO
+              arguments:
+                to: ref('RESULTADO')
+                field: ID_RESULTADO
       - name: ID_COMPETICION
         description: "FK a la competición popular en la que se inscribe el ciclista"
         tests:
           - not_null
           - relationships:
-              to: ref('COMPETICION')
-              field: ID_COMPETICION
+              arguments:
+                to: ref('COMPETICION')
+                field: ID_COMPETICION
       - name: ID_CICLISTA
         description: "FK al ciclista inscrito en la prueba popular"
         tests:
           - not_null
           - relationships:
-              to: ref('CICLISTA')
-              field: ID_CICLISTA
+              arguments:
+                to: ref('CICLISTA')
+                field: ID_CICLISTA
       - name: CLUB_LOCAL
         description: "Club local al que pertenece el participante (si aplica)"
       - name: MOTIVACION_PRINCIPAL
@@ -829,7 +864,8 @@ models:
         tests:
           - not_null
           - accepted_values:
-              values: ['Principiante', 'Intermedio', 'Avanzado', 'Experto']
+              arguments:
+                values: ['Principiante', 'Intermedio', 'Avanzado', 'Experto']
       - name: TIPO_BICI_USADA
         description: "Tipo de bicicleta utilizada por el participante en la prueba"
         tests: [not_null]
@@ -838,7 +874,8 @@ models:
         tests:
           - not_null
           - accepted_values:
-              values: [true, false]
+              arguments:
+                values: [true, false]
       - name: FUENTE_CONOCIMIENTO
         description: "Canal por el que el participante conoció la prueba (redes, amigos, web, etc.)"
         tests: [not_null]
@@ -853,7 +890,8 @@ models:
         tests:
           - not_null
           - accepted_values:
-              values: [true, false]
+              arguments:
+                values: [true, false]
       - name: KM_ENTRENADOS_SEMANA_PREV
         description: "Kilómetros de entrenamiento semanal realizados en las semanas previas a la prueba"
         tests: [not_null]
