@@ -7,7 +7,11 @@
 }}
 
 with fechas_raw as (
-    select fecha_nacimiento  as fecha from {{ ref('CICLISTA') }}  where fecha_nacimiento is not null
+    select 
+        fecha_nacimiento  as fecha 
+    from {{ ref('CICLISTA') }}  
+    where 
+        fecha_nacimiento is not null
     union
     select fecha_inicio      as fecha from {{ ref('COMPETICION') }} where fecha_inicio is not null
     union
