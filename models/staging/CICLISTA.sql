@@ -41,4 +41,7 @@ renamed as (
         order by c._INGESTED_AT desc
     ) = 1
 )
-select * from renamed
+select
+    row_number() over (order by _id_bronze) as id_ciclista,
+    *
+from renamed

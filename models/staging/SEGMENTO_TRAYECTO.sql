@@ -27,4 +27,7 @@ renamed as (
     left join tipo_segmento ts
         on upper(trim(s.TIPO_SEGMENTO)) = upper(trim(ts.codigo))
 )
-select * from renamed
+select
+    row_number() over (order by _id_bronze) as id_segmento,
+    *
+from renamed

@@ -14,15 +14,19 @@ pais as (
     select id_pais, nombre from {{ ref('PAIS') }}
 ),
 
+nivel_competicion as (
+    select id_nivel, codigo from {{ ref('NIVEL_COMPETICION') }}
+),
+
 final as (
     select
         DEV_GOLD_DB.GOLD.SEQ_DIM_COMPETICION.NEXTVAL  as SK_COMPETICION,
-        c._id_bronze                                    as ID_COMPETICION,
+        c.id_competicion                                as ID_COMPETICION,
         c.nombre                                        as NOMBRE,
         p.nombre                                        as PAIS,
         c.distancia_total_km                            as DISTANCIA_TOTAL_KM,
         c.num_participantes_inscritos                   as NUM_PARTICIPANTES,
-        c.nivel                                         as NIVEL,
+        n.codigo                                        as NIVEL,
         c.presupuesto_premios_eur                       as PRESUPUESTO_PREMIOS,
         c.altitud_media_m                               as ALTITUD_MEDIA,
         c.dificultad_tecnica                            as DIFICULTAD_TECNICA,
@@ -32,9 +36,11 @@ final as (
     from competicion c
     left join pais p
         on c.id_pais = p.id_pais
+    left join nivel_competicion n
+        on c.id_nivel = n.id_nivel
 
     {% if is_incremental() %}
-    where c._id_bronze not in (select ID_COMPETICION from {{ this }})
+    where c.id_competicion not in (select ID_COMPETICION from {{ this }})
     {% endif %}
 )
 

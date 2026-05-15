@@ -25,4 +25,7 @@ renamed as (
     left join categoria_uci c
         on upper(trim(e.CATEGORIA_UCI)) = upper(trim(c.codigo))
 )
-select * from renamed
+select
+    row_number() over (order by _id_bronze) as id_equipo,
+    *
+from renamed

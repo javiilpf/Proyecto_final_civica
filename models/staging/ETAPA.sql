@@ -37,4 +37,7 @@ renamed as (
     left join tipo_terreno ts
         on upper(trim(e.SUPERFICIE_PREDOMINANTE)) = upper(trim(ts.codigo))
 )
-select * from renamed
+select
+    row_number() over (order by _id_bronze) as id_etapa,
+    *
+from renamed

@@ -33,4 +33,7 @@ renamed as (
     left join resultado r
         on t.ID_RESULTADO_FK = r._id_bronze
 )
-select * from renamed
+select
+    row_number() over (order by _id_bronze) as id_telemetria,
+    *
+from renamed

@@ -52,4 +52,7 @@ renamed as (
     left join equipo eq
         on r.ID_EQUIPO_FK = eq._id_bronze
 )
-select * from renamed
+select
+    row_number() over (order by _id_bronze) as id_resultado,
+    *
+from renamed

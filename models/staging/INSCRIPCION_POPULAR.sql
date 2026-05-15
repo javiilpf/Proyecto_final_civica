@@ -35,4 +35,7 @@ renamed as (
     left join ciclista ci
         on i.ID_CICLISTA_FK = ci._id_bronze
 )
-select * from renamed
+select
+    row_number() over (order by _id_bronze) as id_inscripcion,
+    *
+from renamed

@@ -1,6 +1,4 @@
 with source as (
--- Los dos campos traen misma información, pero ninguna de las dos tablas tiene todos los registros diferentes, por lo que hago un union
--- Además es un union porque al estar sacando la información de silver no existen relaciones por lo que uno las tablas en la CTE.
     select categoria_uci
     from {{ ref('stg_competicion') }}
     union
@@ -8,17 +6,15 @@ with source as (
     from {{ ref('stg_equipo') }}
 ),
 renamed as (
-    -- En este caso me interesa que todos los nombres estén en mayúscula
     select distinct
-        --Elimino los posibles espacios en blanco por delante y por detrás del texto y lo pongo en mayúscula
         upper(trim(categoria_uci)) as codigo
     from source
     where categoria_uci is not null
 )
 select
+    row_number() over (order by codigo) as id_categoria,
     codigo,
     case codigo
-        -- Catelogo de los distintos niveles según el tipo de competición
         -- Máxima categoría
         when 'WORLDTOUR'     then 1
         when 'WT'            then 1
@@ -55,9 +51,7 @@ select
         -- ORGANIZACIONES
         when 'AMATEUR'       then 8
         when 'GRAVEL_AM'     then 8
-    
         when 'INVITACIONAL'  then 9
-        -- EL RESTO DE CATEGORIAS SERÁN TIPO 10 Y POR TANTO CONSIDERARADAS NO RELEVANTES
-    else 10
-end as nivel
+        else 10
+    end as nivel
 from renamed

@@ -53,4 +53,8 @@ normalizado as (
     from source
     where tipo_terreno is not null
 )
-select * from normalizado
+select
+    row_number() over (order by codigo) as id_terreno,
+    codigo,
+    initcap(replace(codigo, '_', ' ')) as descripcion
+from normalizado

@@ -47,4 +47,7 @@ renamed as (
     left join nivel_competicion n
         on upper(trim(c.NIVEL)) = upper(trim(n.codigo))
 )
-select * from renamed
+select
+    row_number() over (order by _id_bronze) as id_competicion,
+    *
+from renamed

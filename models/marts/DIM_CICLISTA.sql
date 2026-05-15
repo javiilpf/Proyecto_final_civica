@@ -17,7 +17,7 @@ pais as (
 final as (
     select
         DEV_GOLD_DB.GOLD.SEQ_DIM_CICLISTA.NEXTVAL     as SK_CICLISTA,
-        c._id_bronze                                    as ID_CICLISTA,
+        c.id_ciclista                                   as ID_CICLISTA,
         upper(trim(c.nombre)) || ' ' || upper(trim(c.apellidos)) as NOMBRE,
         c.genero                                        as GENERO,
         c.categoria                                     as CATEGORIA,
@@ -34,7 +34,7 @@ final as (
         on c.id_nacionalidad = pn.id_pais
 
     {% if is_incremental() %}
-    where c._id_bronze not in (select ID_CICLISTA from {{ this }})
+    where c.id_ciclista not in (select ID_CICLISTA from {{ this }})
     {% endif %}
 )
 

@@ -31,4 +31,7 @@ renamed as (
     left join ciclista c
         on f.ID_CICLISTA_FK = c._id_bronze
 )
-select * from renamed
+select
+    row_number() over (order by _id_bronze) as id_forma,
+    *
+from renamed

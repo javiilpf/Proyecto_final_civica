@@ -2,8 +2,8 @@ with source as (
     select * from {{ ref('stg_competicion') }}
 ),
 renamed as (
-    select
-        distinct initcap(trim(nivel)) as nivel,
+    select distinct
+        initcap(trim(nivel)) as codigo,
         case upper(trim(nivel))
             when 'INTERNACIONAL' then 1
             when 'ELITE'         then 2
@@ -22,4 +22,8 @@ renamed as (
     from source
     where nivel is not null
 )
-select * from renamed
+select
+    row_number() over (order by orden, codigo) as id_nivel,
+    codigo,
+    orden
+from renamed
