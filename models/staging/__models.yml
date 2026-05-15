@@ -1,0 +1,900 @@
+version: 2
+
+models:
+
+  - name: PAIS
+    description: >
+      Tabla de países. Contiene el código ISO, nombre oficial y continente.
+      Se usa como dimensión de referencia en ciclistas, equipos y competiciones.
+    config:
+      materialized: table
+      schema: SILVER
+    columns:
+      - name: ID_PAIS
+        description: "Clave primaria del país"
+        tests: [not_null, unique]
+      - name: CODIGO_ISO
+        description: "Código ISO 3166-1 alpha-2 del país (ej. ES, FR, IT)"
+        tests: [not_null, unique]
+      - name: NOMBRE
+        description: "Nombre oficial del país"
+        tests: [not_null, unique]
+      - name: CONTINENTE
+        description: "Continente al que pertenece el país"
+        tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ['Europa', 'América', 'Asia', 'África', 'Oceanía']
+
+  - name: CATEGORIA_UCI
+    description: >
+      Catálogo de categorías UCI (Union Cycliste Internationale).
+    config:
+      materialized: table
+      schema: SILVER
+    columns:
+      - name: ID_CATEGORIA
+        description: "Clave primaria de categoría UCI"
+        tests: [not_null, unique]
+      - name: CODIGO
+        description: "Código abreviado de categoría (ej. WT, PRO, ...)"
+        tests: [not_null, unique]
+      - name: NIVEL
+        description: "Nivel jerárquico de la categoría"
+        tests: [not_null]
+
+  - name: NIVEL_COMPETICION
+    description: >
+      Permite clasificar las pruebas por su relevancia y alcance.
+    config:
+      materialized: table
+      schema: SILVER
+    columns:
+      - name: ID_NIVEL
+        description: "Clave primaria"
+        tests: [not_null, unique]
+      - name: CODIGO
+        description: "Código identificativo del nivel (ej. LOC, REG, NAC, INT)"
+        tests: [not_null, unique]
+      - name: ORDEN
+        description: "Valor numérico para ordenar los niveles de menor a mayor relevancia"
+        tests: [not_null, unique]
+
+  - name: TIPO_COMPETICION
+    description: >
+      Incluye la disciplina asociada a cada tipo (MTB, ruta, ciclocross, etc.).
+    config:
+      materialized: table
+      schema: SILVER
+    columns:
+      - name: ID_TIPO
+        description: "Clave primaria"
+        tests: [not_null, unique]
+      - name: CODIGO
+        description: "Código del tipo de competición"
+        tests: [not_null, unique]
+      - name: DESCRIPCION
+        description: "Descripción del tipo de competición"
+        tests: [not_null, unique]
+      - name: DISCIPLINA
+        description: "Disciplina ciclista asociada (ej. MTB, Ruta, Ciclocross, Pista)"
+        tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ['MTB', 'Ruta', 'Ciclocross', 'Pista', 'BMX', 'Gravel']
+
+  - name: TIPO_TERRENO
+    description: >
+      Clasifica el perfil y la superficie del recorrido de las competiciones.
+    config:
+      materialized: table
+      schema: SILVER
+    columns:
+      - name: ID_TERRENO
+        description: "Clave primaria"
+        tests: [not_null, unique]
+      - name: CODIGO
+        description: "Código del tipo de terreno"
+        tests: [not_null, unique]
+      - name: DESCRIPCION
+        description: "Descripción del perfil de terreno"
+        tests: [not_null]
+
+  - name: TIPO_SEGMENTO
+    description: >
+      Permite identificar tramos técnicos, descensos, subidas, etc.
+      De esta forma podría analizar en que tipo de tramo es mejor cada ciclista
+    config:
+      materialized: table
+      schema: SILVER
+    columns:
+      - name: ID_TIPO_SEGMENTO
+        description: "Clave primaria"
+        tests: [not_null, unique]
+      - name: CODIGO
+        description: "Código tipo de segmento"
+        tests: [not_null, unique]
+      - name: DESCRIPCION
+        description: "Descripción tipo de segmento"
+        tests: [not_null, unique]
+      - name: ES_TECNICO
+        description: "Boolean indicando si es un segmento difícil"
+        tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: [true, false]
+      - name: REQUIERE_DESCENSO
+        description: "Boolean que indica sobre descensos considerables"
+        tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: [true, false]
+
+
+  - name: EQUIPO
+    description: >
+      Equipos ciclistas. Pais, categoría UCI, presupuesto, dirección técnica, disciplina y estado activo.
+    config:
+      materialized: table
+      schema: SILVER
+    columns:
+      - name: ID_EQUIPO
+        description: "Clave primaria de equipo"
+        tests: [not_null, unique]
+      - name: _ID_BRONZE
+        description: "Identificador del registro original en Bronze"
+        tests: [not_null, unique]
+      - name: ID_PAIS
+        description: "FK al país de origen del equipo"
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('PAIS')
+                field: ID_PAIS
+
+      - name: ID_CATEGORIA_UCI
+        description: "FK a la categoría UCI del equipo"
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('CATEGORIA_UCI')
+                field: ID_CATEGORIA
+      - name: NOMBRE
+        description: "Nombre oficial del equipo"
+        tests: [not_null, unique]
+      - name: PRESUPUESTO_EUR
+        description: "Presupuesto anual del equipo en euros"
+        tests: [not_null]
+      - name: DIRECTOR_TECNICO
+        description: "Nombre del director técnico del equipo"
+        tests: [not_null]
+      - name: ANIO_FUNDACION
+        description: "Año de fundación"
+        tests: [not_null]
+      - name: DISCIPLINA
+        description: "MTB, Ruta, etc..."
+        tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ['MTB', 'Ruta', 'Ciclocross', 'Pista', 'BMX', 'Gravel']
+      - name: PATROCINADOR_PPAL
+        description: "Nombre del patrocinador principal del equipo"
+        tests: [not_null]
+      - name: ACTIVO
+        description: "Boolean que indica si el equipo está actualmente activo"
+        tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: [true, false]
+
+  - name: CICLISTA
+    description: >
+      Ciclistas registrados
+    config:
+      materialized: table
+      schema: SILVER
+    columns:
+      - name: ID_CICLISTA
+        description: "Clave primaria de ciclista"
+        tests: [not_null, unique]
+      - name: _ID_BRONZE
+        description: "Identificador en Bronze (trazabilidad)"
+        tests: [not_null, unique]
+      - name: ID_EQUIPO
+        description: "FK al equipo al que pertenece actualmente el ciclista"
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('EQUIPO')
+                field: ID_EQUIPO
+      - name: ID_NACIONALIDAD
+        description: "FK al país del ciclista"
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('PAIS')
+                field: ID_PAIS
+      - name: ID_PAIS_RESIDENCIA
+        description: "FK al país donde vive el ciclista"
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('PAIS')
+                field: ID_PAIS
+      - name: NOMBRE
+        description: "Nombre"
+        tests: [not_null]
+      - name: APELLIDOS
+        description: "Apellidos"
+        tests: [not_null]
+      - name: FECHA_NACIMIENTO
+        description: "Fecha de nacimiento"
+        tests: [not_null]
+      - name: PESO_KG
+        description: "Peso corporal (kg)"
+        tests: [not_null]
+      - name: ALTURA_CM
+        description: "Altura (cm)"
+        tests: [not_null]
+      - name: DISCIPLINA
+        description: "Disciplina principal"
+        tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ['MTB', 'Ruta', 'Ciclocross', 'Pista', 'BMX', 'Gravel']
+      - name: ESPECIALIDAD
+        description: "escalador, rodador, sprinter, etc."
+        tests: [not_null]
+      - name: ACTIVO
+        description: "Indica si el ciclista está en activo competitivamente"
+        tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: [true, false]
+      - name: GENERO
+        description: "Género"
+        tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ['M', 'F', 'NB']
+      - name: CATEGORIA
+        description: "Según la edad (Elite, Sub23, Junior, Master, etc.)"
+        tests: [not_null]
+      - name: BICI_MARCA
+        description: "Marca bicicleta"
+        tests: [not_null]
+      - name: BICI_MODELO
+        description: "Modelo bicicleta"
+        tests: [not_null]
+      - name: PALMARES_VICTORIAS
+        description: "Número de victorias"
+        tests: [not_null]
+      - name: ESTILO_PEDALEO
+        description: "Estilo de pedaleo predominante"
+        tests: [not_null]
+      - name: LATERALIDAD
+        description: "diestro, zurdo"
+        tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ['Diestro', 'Zurdo', 'Ambidiestro']
+      - name: ANOS_EXPERIENCIA
+        description: "Experiencia en años"
+        tests: [not_null]
+
+  - name: COMPETICION
+    description: >
+      Competiciones ciclistas organizadas: carreras de un día, etapas, pruebas populares, etc.
+    config:
+      materialized: table
+      schema: SILVER
+    columns:
+      - name: ID_COMPETICION
+        description: "Clave primaria de la competición"
+        tests: [not_null, unique]
+      - name: _ID_BRONZE
+        description: "Identificador del registro original en la capa Bronze (trazabilidad)"
+        tests: [not_null, unique]
+      - name: ID_TIPO
+        description: "FK al tipo de competición"
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('TIPO_COMPETICION')
+                field: ID_TIPO
+      - name: ID_CATEGORIA_UCI
+        description: "FK a la categoría UCI de la prueba"
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('CATEGORIA_UCI')
+                field: ID_CATEGORIA
+      - name: ID_PAIS
+        description: "FK al país donde se celebra la competición"
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('PAIS')
+                field: ID_PAIS
+      - name: ID_NIVEL
+        description: "FK al nivel de la competición"
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('NIVEL_COMPETICION')
+                field: ID_NIVEL
+      - name: NOMBRE
+        description: "Nombre oficial de la competición"
+        tests: [not_null]
+      - name: CIUDAD
+        description: "Ciudad principal o sede de la competición"
+        tests: [not_null]
+      - name: FECHA_INICIO
+        description: "Fecha de inicio de la competición"
+        tests: [not_null]
+      - name: FECHA_FIN
+        description: "Fecha de finalización de la competición"
+        tests: [not_null]
+      - name: TEMPORADA
+        description: "Año de la temporada a la que pertenece la competición"
+        tests: [not_null]
+      - name: ORGANIZADOR
+        description: "Entidad u organización responsable de la prueba"
+        tests: [not_null]
+      - name: CIRCUITO
+        description: "Circuito o liga internacional al que pertenece la prueba (si aplica)"
+      - name: DISTANCIA_TOTAL_KM
+        description: "Distancia total del recorrido de la competición en kilómetros"
+        tests: [not_null]
+      - name: NUM_PARTICIPANTES_INSCRITOS
+        description: "Número total de participantes inscritos en la competición"
+        tests: [not_null]
+      - name: PRESUPUESTO_PREMIOS_EUR
+        description: "Presupuesto total destinado a premios en euros"
+        tests: [not_null]
+      - name: ALTITUD_MEDIA_M
+        description: "Altitud media del recorrido en metros"
+        tests: [not_null]
+      - name: PCT_TIERRA_NATURAL
+        description: "Porcentaje del recorrido sobre tierra natural (0-100)"
+        tests: [not_null]
+      - name: DIFICULTAD_TECNICA
+        description: "Puntuación de dificultad técnica del recorrido (escala 1-10)"
+        tests: [not_null]
+      - name: VALORACION_MEDIA_CORREDORES
+        description: "Valoración media de la prueba otorgada por los corredores (escala 1-10)"
+        tests: [not_null]
+      - name: NUM_VOLUNTARIOS
+        description: "Número de voluntarios que colaboran en la organización de la prueba"
+        tests: [not_null]
+      - name: TRANMISION_ONLINE
+        description: "Indica si la competición cuenta con retransmisión en línea (true/false)"
+        tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: [true, false]
+      - name: PATROCINADOR_LOCAL
+        description: "Nombre del patrocinador local principal de la competición"
+
+  - name: ETAPA
+    description: >
+      Etapas individuales forman una competición.
+    config:
+      materialized: table
+      schema: SILVER
+    columns:
+      - name: ID_ETAPA
+        description: "Clave primaria de la etapa"
+        tests: [not_null, unique]
+      - name: _ID_BRONZE
+        description: "Identificador del registro original en la capa Bronze (trazabilidad)"
+        tests: [not_null, unique]
+      - name: ID_COMPETICION
+        description: "FK a la competición a la que pertenece esta etapa"
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('COMPETICION')
+                field: ID_COMPETICION
+      - name: ID_TIPO_TERRENO
+        description: "FK al tipo de terreno predominante en la etapa"
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('TIPO_TERRENO')
+                field: ID_TERRENO
+      - name: ID_SUPERFICIE
+        description: "FK al tipo de superficie del recorrido"
+        tests: [not_null]
+      - name: NOMBRE_ETAPA
+        description: "Nombre o denominación de la etapa"
+        tests: [not_null]
+      - name: NUMERO_ETAPA
+        description: "Número de orden de la etapa dentro de la competición"
+        tests: [not_null]
+      - name: FECHA
+        description: "Fecha de celebración de la etapa"
+        tests: [not_null]
+      - name: DISTANCIA_KM
+        description: "Distancia total de la etapa en kilómetros"
+        tests: [not_null]
+      - name: DESNIVEL_POS_M
+        description: "Desnivel positivo acumulado de la etapa en metros"
+        tests: [not_null]
+      - name: ALTITUD_MAX_M
+        description: "Altitud máxima alcanzada durante la etapa en metros"
+        tests: [not_null]
+      - name: NUMERO_VUELTAS
+        description: "Número de vueltas al circuito (1 para etapas lineales)"
+        tests: [not_null]
+      - name: LONGITUD_VUELTA_KM
+        description: "Longitud de cada vuelta en kilómetros (si aplica circuito)"
+        tests: [not_null]
+      - name: NUM_TRAMOS_TECNICOS
+        description: "Número de tramos técnicos identificados en la etapa"
+        tests: [not_null]
+      - name: NUM_PUERTOS
+        description: "Número de puertos de montaña o ascensiones relevantes en la etapa"
+        tests: [not_null]
+      - name: ALTITUD_MEDIA_M
+        description: "Altitud media del recorrido de la etapa en metros"
+        tests: [not_null]
+      - name: INDICE_EXPOSICION_CALOR
+        description: "Índice de exposición al calor estimado para la etapa (escala 1-10)"
+        tests: [not_null]
+      - name: FACTOR_RIESGO_DESCENSO
+        description: "Factor de riesgo asociado a los descensos de la etapa (escala 1-10)"
+        tests: [not_null]
+      - name: PUNTOS_ABASTECIMIENTO
+        description: "Número de puntos de avituallamiento disponibles en la etapa"
+        tests: [not_null]
+
+  - name: FORMA_FISICA
+    description: >
+      Mediciones periódicas del estado de forma física de cada ciclista.
+      Incluye métricas de rendimiento (FTP, VO2max, potencia/kg), carga de entrenamiento
+      (CTL, ATL, TSB), datos de recuperación y bienestar (HRV, sueño, estrés).
+    config:
+      materialized: table
+      schema: SILVER
+    columns:
+      - name: ID_FORMA
+        description: "Clave primaria del registro de forma física"
+        tests: [not_null, unique]
+      - name: _ID_BRONZE
+        description: "Identificador del registro original en la capa Bronze (trazabilidad)"
+        tests: [not_null, unique]
+      - name: ID_CICLISTA
+        description: "FK al ciclista al que corresponde la medición"
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('CICLISTA')
+                field: ID_CICLISTA
+      - name: FECHA_MEDICION
+        description: "Fecha en que se realizó la medición de forma física"
+        tests: [not_null]
+      - name: PESO_KG
+        description: "Peso corporal del ciclista en el momento de la medición (kg)"
+        tests: [not_null]
+      - name: FTP_W
+        description: "Functional Threshold Power: potencia umbral funcional en vatios"
+        tests: [not_null]
+      - name: VO2MAX
+        description: "Consumo máximo de oxígeno en ml/kg/min"
+        tests: [not_null]
+      - name: FC_REPOSO
+        description: "Frecuencia cardíaca en reposo en pulsaciones por minuto"
+        tests: [not_null]
+      - name: FC_MAX
+        description: "Frecuencia cardíaca máxima en pulsaciones por minuto"
+        tests: [not_null]
+      - name: POTENCIA_POR_KG
+        description: "Relación potencia/peso del ciclista en vatios por kilogramo (W/kg)"
+        tests: [not_null]
+      - name: HORAS_ENTRENO_SEMANA
+        description: "Horas de entrenamiento realizadas durante la semana"
+        tests: [not_null]
+      - name: FORMA_SUBJETIVA
+        description: "Valoración subjetiva del ciclista sobre su estado de forma (escala 1-10)"
+        tests: [not_null]
+      - name: NOTAS
+        description: "Notas libres del entrenador o ciclista sobre la medición"
+      - name: CTL_CARGA_CRONICA
+        description: "Chronic Training Load: media de carga de entrenamiento de las últimas 6 semanas (TSS)"
+        tests: [not_null]
+      - name: ATL_CARGA_AGUDA
+        description: "Acute Training Load: media de carga de entrenamiento de los últimos 7 días (TSS)"
+        tests: [not_null]
+      - name: TSB_FORMA
+        description: "Training Stress Balance: equilibrio entre forma y fatiga (CTL - ATL)"
+        tests: [not_null]
+      - name: PROTEINA_DIARIA_G_KG
+        description: "Ingesta diaria de proteína en gramos por kilogramo de peso corporal"
+        tests: [not_null]
+      - name: SUENO_HORAS_NOCHE
+        description: "Horas de sueño por noche registradas en el período de medición"
+        tests: [not_null]
+      - name: NIVEL_ESTRES_1_10
+        description: "Nivel de estrés percibido por el ciclista (escala 1-10)"
+        tests: [not_null]
+      - name: HRV_MS
+        description: "Heart Rate Variability: variabilidad de la frecuencia cardíaca en milisegundos"
+        tests: [not_null]
+      - name: LACTATO_UMBRAL_MMOL
+        description: "Concentración de lactato sanguíneo en el umbral anaeróbico (mmol/L)"
+        tests: [not_null]
+      - name: CADENCIA_OPTIMA_RPM
+        description: "Cadencia de pedaleo óptima del ciclista en revoluciones por minuto"
+        tests: [not_null]
+
+  - name: RESULTADO
+    description: >
+      Resultados individuales de cada ciclista en cada etapa o prueba de una competición.
+      Incluye posición, tiempos, puntos UCI, condiciones meteorológicas y métricas de rendimiento
+      como eficiencia energética, pacing y penalizaciones.
+    config:
+      materialized: table
+      schema: SILVER
+    columns:
+      - name: ID_RESULTADO
+        description: "Clave primaria del resultado"
+        tests: [not_null, unique]
+      - name: _ID_BRONZE
+        description: "Identificador del registro original en la capa Bronze (trazabilidad)"
+        tests: [not_null, unique]
+      - name: ID_CICLISTA
+        description: "FK al ciclista que obtiene el resultado"
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('CICLISTA')
+                field: ID_CICLISTA
+      - name: ID_COMPETICION
+        description: "FK a la competición en la que se registra el resultado"
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('COMPETICION')
+                field: ID_COMPETICION
+      - name: ID_ETAPA
+        description: "FK a la etapa específica del resultado (null si es resultado general)"
+        tests:
+          - relationships:
+              arguments:
+                to: ref('ETAPA')
+                field: ID_ETAPA
+      - name: ID_EQUIPO
+        description: "FK al equipo con el que compite el ciclista en esta prueba"
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('EQUIPO')
+                field: ID_EQUIPO
+      - name: DORSAL
+        description: "Número de dorsal del ciclista en la competición"
+        tests: [not_null]
+      - name: POSICION_FINAL
+        description: "Posición final obtenida por el ciclista en la clasificación"
+        tests: [not_null]
+      - name: TIEMPO_TOTAL_SEG
+        description: "Tiempo total invertido en completar la prueba en segundos"
+        tests: [not_null]
+      - name: DIFERENCIA_SEG
+        description: "Diferencia de tiempo respecto al primer clasificado en segundos"
+        tests: [not_null]
+      - name: ABANDONO
+        description: "Indica si el ciclista abandonó la prueba (true/false)"
+        tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: [true, false]
+      - name: MOTIVO_ABANDONO
+        description: "Motivo del abandono si aplica (caída, mecánica, enfermedad, etc.)"
+      - name: PUNTOS_UCI
+        description: "Puntos UCI obtenidos según la posición en la clasificación"
+        tests: [not_null]
+      - name: TEMPERATURA_C
+        description: "Temperatura ambiente durante la prueba en grados Celsius"
+        tests: [not_null]
+      - name: HUMEDAD_PCT
+        description: "Porcentaje de humedad relativa durante la prueba"
+        tests: [not_null]
+      - name: VIENTO_KMH
+        description: "Velocidad del viento durante la prueba en km/h"
+        tests: [not_null]
+      - name: LLUVIA_MM
+        description: "Precipitación registrada durante la prueba en milímetros"
+        tests: [not_null]
+      - name: CONDICION_METEO
+        description: "Descripción de las condiciones meteorológicas predominantes"
+        tests: [not_null]
+      - name: TIPO_TERRENO
+        description: "Tipo de terreno predominante durante la prueba"
+        tests: [not_null]
+      - name: DISTANCIA_KM
+        description: "Distancia real completada por el ciclista en kilómetros"
+        tests: [not_null]
+      - name: DESNIVEL_POS_M
+        description: "Desnivel positivo acumulado durante la prueba en metros"
+        tests: [not_null]
+      - name: EFICIENCIA_ENERGETICA
+        description: "Índice de eficiencia energética del ciclista durante la prueba"
+        tests: [not_null]
+      - name: INDICE_PACING
+        description: "Índice de regularidad en el ritmo de carrera (1 = perfectamente constante)"
+        tests: [not_null]
+      - name: PENALIZACION_SEG
+        description: "Segundos de penalización aplicados al tiempo del ciclista"
+        tests: [not_null]
+      - name: CAIDAS_REPORTADAS
+        description: "Número de caídas reportadas durante la prueba"
+        tests: [not_null]
+      - name: BONIFICACION_SEG
+        description: "Segundos de bonificación descontados del tiempo del ciclista"
+        tests: [not_null]
+      - name: PORCENTAJE_COMPLETADO
+        description: "Porcentaje de la distancia total completado por el ciclista (0-100)"
+        tests: [not_null]
+      - name: POSICION_TOP10
+        description: "Indica si el ciclista finalizó entre los 10 primeros (true/false)"
+        tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: [true, false]
+
+  - name: TELEMETRIA_VUELTA
+    description: >
+      Datos de telemetría por vuelta registrados durante la competición para cada resultado.
+    config:
+      materialized: table
+      schema: SILVER
+    columns:
+      - name: ID_TELEMETRIA
+        description: "Clave primaria del registro de telemetría"
+        tests: [not_null, unique]
+      - name: _ID_BRONZE
+        description: "Identificador del registro original en la capa Bronze (trazabilidad)"
+        tests: [not_null, unique]
+      - name: ID_RESULTADO
+        description: "FK al resultado de la carrera al que pertenece esta vuelta"
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('RESULTADO')
+                field: ID_RESULTADO
+      - name: NUMERO_VUELTA
+        description: "Número de vuelta al circuito dentro de la prueba"
+        tests: [not_null]
+      - name: TIEMPO_VUELTA_SEG
+        description: "Tiempo empleado en completar la vuelta en segundos"
+        tests: [not_null]
+      - name: VELOCIDAD_MEDIA_KMH
+        description: "Velocidad media durante la vuelta en km/h"
+        tests: [not_null]
+      - name: VELOCIDAD_MAX_KMH
+        description: "Velocidad máxima alcanzada durante la vuelta en km/h"
+        tests: [not_null]
+      - name: POTENCIA_MEDIA_W
+        description: "Potencia media generada durante la vuelta en vatios"
+        tests: [not_null]
+      - name: POTENCIA_MAX_W
+        description: "Potencia máxima alcanzada durante la vuelta en vatios"
+        tests: [not_null]
+      - name: POTENCIA_NORM_W
+        description: "Potencia normalizada (NP) de la vuelta en vatios"
+        tests: [not_null]
+      - name: CADENCIA_MEDIA_RPM
+        description: "Cadencia media de pedaleo durante la vuelta en rpm"
+        tests: [not_null]
+      - name: FC_MEDIA_BPM
+        description: "Frecuencia cardíaca media durante la vuelta en pulsaciones por minuto"
+        tests: [not_null]
+      - name: FC_MAX_BPM
+        description: "Frecuencia cardíaca máxima alcanzada durante la vuelta en bpm"
+        tests: [not_null]
+      - name: ALTITUD_GANADA_M
+        description: "Metros de desnivel positivo acumulados durante la vuelta"
+        tests: [not_null]
+      - name: DISTANCIA_REAL_KM
+        description: "Distancia real recorrida durante la vuelta en kilómetros"
+        tests: [not_null]
+      - name: TSS_VUELTA
+        description: "Training Stress Score de la vuelta (carga de esfuerzo normalizada)"
+        tests: [not_null]
+      - name: PCT_ZONA_5
+        description: "Porcentaje del tiempo de vuelta transcurrido en zona 5 de potencia (0-100)"
+        tests: [not_null]
+      - name: EFICIENCIA_PEDALEO_PCT
+        description: "Porcentaje de eficiencia de pedaleo durante la vuelta (0-100)"
+        tests: [not_null]
+      - name: TEMPERATURA_EXTERIOR_C
+        description: "Temperatura exterior registrada durante la vuelta en grados Celsius"
+        tests: [not_null]
+      - name: VARIABILIDAD_POTENCIA_VI
+        description: "Variability Index de potencia: ratio entre potencia normalizada y media"
+        tests: [not_null]
+      - name: VELOCIDAD_BAJADA_MAX_KMH
+        description: "Velocidad máxima alcanzada en los descensos durante la vuelta en km/h"
+        tests: [not_null]
+      - name: TIEMPO_EN_AIRE_MS
+        description: "Tiempo total con la bici en el aire (saltos) durante la vuelta en milisegundos"
+        tests: [not_null]
+      - name: DESNIVELADO_POSITIVO_VUELTA_M
+        description: "Desnivel positivo acumulado en la vuelta en metros"
+        tests: [not_null]
+      - name: PERDIDA_TIEMPO_TECNICO_SEG
+        description: "Segundos perdidos en tramos técnicos respecto al óptimo estimado"
+        tests: [not_null]
+
+  - name: SEGMENTO_TRAYECTO
+    description: >
+      Segmentos individuales que componen cada vuelta de telemetría.
+      Permiten un análisis granular del rendimiento del ciclista por tramo
+      (técnico, descenso, subida, llano), con métricas de potencia, velocidad y errores de línea.
+    config:
+      materialized: table
+      schema: SILVER
+    columns:
+      - name: ID_SEGMENTO
+        description: "Clave primaria del segmento de trayecto"
+        tests: [not_null, unique]
+      - name: _ID_BRONZE
+        description: "Identificador del registro original en la capa Bronze (trazabilidad)"
+        tests: [not_null, unique]
+      - name: ID_TELEMETRIA
+        description: "FK al registro de telemetría de vuelta al que pertenece el segmento"
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('TELEMETRIA_VUELTA')
+                field: ID_TELEMETRIA
+      - name: ID_TIPO_SEGMENTO
+        description: "FK al tipo de segmento (técnico, descenso, subida, llano, etc.)"
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('TIPO_SEGMENTO')
+                field: ID_TIPO_SEGMENTO
+      - name: NUMERO_SEGMENTO
+        description: "Número de orden del segmento dentro de la vuelta"
+        tests: [not_null]
+      - name: TIEMPO_SEG
+        description: "Tiempo empleado en completar el segmento en segundos"
+        tests: [not_null]
+      - name: DISTANCIA_M
+        description: "Distancia del segmento en metros"
+        tests: [not_null]
+      - name: DESNIVEL_M
+        description: "Desnivel del segmento en metros (positivo = subida, negativo = bajada)"
+        tests: [not_null]
+      - name: POTENCIA_MEDIA_W
+        description: "Potencia media generada durante el segmento en vatios"
+        tests: [not_null]
+      - name: FC_MEDIA_BPM
+        description: "Frecuencia cardíaca media durante el segmento en bpm"
+        tests: [not_null]
+      - name: VELOCIDAD_MEDIA_KMH
+        description: "Velocidad media durante el segmento en km/h"
+        tests: [not_null]
+      - name: ERRORES_LINEA
+        description: "Número de errores de línea de trazada detectados en el segmento"
+        tests: [not_null]
+      - name: FRENADAS_BRUSCAS
+        description: "Número de frenadas bruscas detectadas durante el segmento"
+        tests: [not_null]
+
+  - name: INSCRIPCION_POPULAR
+    description: >
+      Inscripciones de ciclistas en competiciones de carácter popular (no élite).
+      Incluye datos de motivación, nivel autopercibido, tipo de bicicleta, experiencia previa
+      y valoraciones post-evento del participante sobre la organización y el recorrido.
+    config:
+      materialized: table
+      schema: SILVER
+    columns:
+      - name: ID_INSCRIPCION
+        description: "Clave primaria de la inscripción popular"
+        tests: [not_null, unique]
+      - name: _ID_BRONZE
+        description: "Identificador del registro original en la capa Bronze (trazabilidad)"
+        tests: [not_null, unique]
+      - name: ID_RESULTADO
+        description: "FK al resultado obtenido por el participante en la prueba"
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('RESULTADO')
+                field: ID_RESULTADO
+      - name: ID_COMPETICION
+        description: "FK a la competición popular en la que se inscribe el ciclista"
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('COMPETICION')
+                field: ID_COMPETICION
+      - name: ID_CICLISTA
+        description: "FK al ciclista inscrito en la prueba popular"
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('CICLISTA')
+                field: ID_CICLISTA
+      - name: CLUB_LOCAL
+        description: "Club local al que pertenece el participante (si aplica)"
+      - name: MOTIVACION_PRINCIPAL
+        description: "Motivación principal del participante para inscribirse (salud, reto, social, etc.)"
+        tests: [not_null]
+      - name: NIVEL_AUTOPERCIBIDO
+        description: "Nivel que el participante se autoatribuye (principiante, intermedio, avanzado)"
+        tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ['Principiante', 'Intermedio', 'Avanzado', 'Experto']
+      - name: TIPO_BICI_USADA
+        description: "Tipo de bicicleta utilizada por el participante en la prueba"
+        tests: [not_null]
+      - name: PRIMERA_VEZ_PRUEBA
+        description: "Indica si es la primera vez que el participante realiza esta prueba (true/false)"
+        tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: [true, false]
+      - name: FUENTE_CONOCIMIENTO
+        description: "Canal por el que el participante conoció la prueba (redes, amigos, web, etc.)"
+        tests: [not_null]
+      - name: VALORACION_ORGANIZACION
+        description: "Valoración de la organización del evento por el participante (escala 1-10)"
+        tests: [not_null]
+      - name: VALORACION_RECORRIDO
+        description: "Valoración del recorrido por el participante (escala 1-10)"
+        tests: [not_null]
+      - name: REPETIRIA
+        description: "Indica si el participante repetiría la prueba en próximas ediciones (true/false)"
+        tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: [true, false]
+      - name: KM_ENTRENADOS_SEMANA_PREV
+        description: "Kilómetros de entrenamiento semanal realizados en las semanas previas a la prueba"
+        tests: [not_null]
+      - name: ANOS_PRACTICANDO_MTB
+        description: "Años de práctica de MTB del participante en el momento de la inscripción"
+        tests: [not_null]

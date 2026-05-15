@@ -1,0 +1,477 @@
+version: 2
+
+sources:
+  - name: RAW
+    database: "DEV_BRONZE_DB"
+    schema: raw
+    tables:
+      - name: CICLISTA
+        columns:
+          - name: ID 
+            data_type: VARCHAR
+          - name: _SOURCE
+            data_type: VARCHAR
+          - name: INGESTED_AT
+            data_type: TIMESTAMP_NTZ
+          - name: ID_EQUIPO_FK
+            data_type: VARCHAR
+          - name: NOMBRE
+            data_type: varchar
+          - name: APELLIDOS
+            data_type: varchar
+          - name: FECHA_NACIMIENTO 
+            data_type: DATE
+          - name: NACIONALIDAD
+            data_type: VARCHAR
+          - name: PESO_KG
+            data_type: NUMBER
+          - name: ALTURA_CM 
+            data_type: NUMBER
+          - name: DISCIPLINA
+            data_type: VARCHAR
+          - name: ESPECIALIDAD
+            data_type: VARCHAR
+          - name: ACTIVO
+            data_type: BOOLEAN
+          - name: GENERO 
+            data_type: VARCHAR
+          - name: CATEGORIA
+            data_type: VARCHAR
+          - name: EQUIPO_NOMBRE
+            data_type: VARCHAR
+          - name: PAIS_RESIDENCIA
+            data_type: VARCHAR
+          - name: BICI_MARCA
+            data_type: VARCHAR
+          - name: BICI_MODELO
+            data_type: VARCHAR
+          - name: PALMARES_VICTORIAS
+            data_type: NUMBER
+          - name: ESTILO_PEDALEO
+            data_type: VARCHAR
+          - name: LATERALIDAD
+            data_type: VARCHAR
+          - name: ANOS_EXPERIENCIA
+            data_type: NUMBER
+
+  
+      - name: COMPETICION
+        columns:
+          - name: order_id
+            data_type: varchar
+          - name: product_id
+            data_type: varchar
+          - name: quantity
+            data_type: number
+          - name: _fivetran_deleted
+            data_type: varchar
+          - name: _fivetran_synced
+            data_type: timestamp_ntz
+
+      - name: EQUIPO
+        columns:
+          - name: _ID 
+            data_type: VARCHAR
+          - name: _SOURCE 
+            data_type: VARCHAR
+          - name: _INGESTED_AT 
+            data_type: TIMESTAMP_NTZ
+          - name: NOMBRE 
+            data_type: VARCHAR
+          - name: PAIS 
+            data_type: VARCHAR
+          - name: PRESUPUESTO_EUR 
+            data_type: NUMBER
+          - name: DIRECTOR_TECNICO 
+            data_type: VARCHAR
+          - name: ANIO_FUNDACION 
+            data_type: NUMBER
+          - name: CATEGORIA_UCI 
+            data_type: VARCHAR
+          - name: DISCIPLINA 
+            data_type: VARCHAR
+          - name: PATROCINADOR_PPAL 
+            data_type: VARCHAR
+          - name: ACTIVO 
+            data_type: BOOLEAN 
+
+
+
+      - name: ETAPA
+        columns:
+          - name: _ID 
+            data_type: VARCHAR
+          - name: _SOURCE 
+            data_type: VARCHAR(50)
+          - name: _INGESTED_AT 
+            data_type: TIMESTAMP_NTZ
+          - name: ID_COMPETICION_FK 
+            data_type: VARCHAR
+          - name: NOMBRE_ETAPA
+            data_type: VARCHAR
+          - name: NUMERO_ETAPA 
+            data_type: NUMBER
+          - name: FECHA 
+            data_type: DATE
+          - name: DISTANCIA_KM 
+            data_type: NUMBER
+          - name: DESNIVEL_POS_M 
+            data_type: NUMBER
+          - name: DESNIVEL_NEG_M 
+            data_type: NUMBER
+          - name: ALTITUD_MAX_M 
+            data_type: NUMBER
+          - name: ALTITUD_SALIDA_M 
+            data_type: NUMBER
+          - name: TIPO_TERRENO 
+            data_type: VARCHAR
+          - name: NUMERO_VUELTAS 
+            data_type: NUMBER
+          - name: LONGITUD_VUELTA_KM 
+            data_type: NUMBER
+          - name: NUM_TRAMOS_TECNICOS 
+            data_type: NUMBER
+          - name: NUM_PUERTOS
+            data_type: NUMBER
+          - name: ALTITUD_MEDIA_M 
+            data_type: NUMBER
+          - name: INDICE_EXPOSICION_CALOR 
+            data_type: NUMBER
+          - name: SUPERFICIE_PREDOMINANTE 
+            data_type: VARCHAR
+          - name: FACTOR_RIESGO_DESCENSO 
+            data_type: NUMBER
+          - name: PUNTOS_ABASTECIMIENTO 
+            data_type: NUMBER
+
+      - name: FORMA_FISICA
+        columns:
+        - name: _ID
+          data_type: VARCHAR
+
+        - name: _SOURCE
+          data_type: VARCHAR
+
+        - name: _INGESTED_AT
+          data_type: TIMESTAMP_NTZ
+
+        - name: ID_CICLISTA_FK
+          data_type: VARCHAR
+
+        - name: FECHA_MEDICION
+          data_type: DATE
+
+        - name: PESO_KG
+          data_type: NUMBER
+
+        - name: FTP_W
+          data_type: NUMBER
+
+        - name: VO2MAX
+          data_type: NUMBER
+
+        - name: FC_REPOSO
+          data_type: NUMBER
+
+        - name: FC_MAX
+          data_type: NUMBER
+
+        - name: POTENCIA_POR_KG
+          data_type: NUMBER
+
+        - name: HORAS_ENTRENO_SEMANA
+          data_type: NUMBER
+
+        - name: FORMA_SUBJETIVA
+          data_type: NUMBER
+
+        - name: NOTAS
+          data_type: VARCHAR
+
+        - name: CTL_CARGA_CRONICA
+          data_type: NUMBER
+
+        - name: ATL_CARGA_AGUDA
+          data_type: NUMBER
+
+        - name: TSB_FORMA
+          data_type: NUMBER
+
+        - name: PROTEINA_DIARIA_G_KG
+          data_type: NUMBER
+
+        - name: SUENO_HORAS_NOCHE
+          data_type: NUMBER
+
+        - name: NIVEL_ESTRES_1_10
+          data_type: NUMBER
+
+        - name: HRV_MS
+          data_type: NUMBER
+
+        - name: LACTATO_UMBRAL_MMOL
+          data_type: NUMBER
+
+        - name: CADENCIA_
+          data_type: NUMBER
+
+      - name: INSCRIPCION_POPULAR
+        columns:
+          - name: _ID
+            data_type: VARCHAR
+          - name: _SOURCE
+            data_type: VARCHAR
+
+          - name: _INGESTED_AT
+            data_type: TIMESTAMP_NTZ
+
+          - name: ID_RESULTADO_FK
+            data_type: VARCHAR
+
+          - name: ID_COMPETICION_FK
+            data_type: VARCHAR
+
+          - name: ID_CICLISTA_FK
+            data_type: VARCHAR
+
+          - name: CLUB_LOCAL
+            data_type: VARCHAR
+
+          - name: MOTIVACION_PRINCIPAL
+            data_type: VARCHAR
+
+          - name: NIVEL_AUTOPERCIBIDO
+            data_type: VARCHAR
+
+          - name: TIPO_BICI_USADA
+            data_type: VARCHAR
+
+          - name: PRIMERA_VEZ_PRUEBA
+            data_type: BOOLEAN
+
+          - name: FUENTE_CONOCIMIENTO
+            data_type: VARCHAR
+
+          - name: VALORACION_ORGANIZACION
+            data_type: NUMBER
+
+          - name: VALORACION_RECORRIDO
+            data_type: NUMBER
+
+          - name: REPETIRIA
+            data_type: BOOLEAN
+
+          - name: KM_ENTRENADOS_SEMANA_PREV
+            data_type: NUMBER
+
+          - name: ANOS_PRACTICANDO_MTB
+            data_type: NUMBER
+
+      - name: RESULTADO
+        columns:
+          - name: _ID
+            data_type: VARCHAR
+
+          - name: _SOURCE
+            data_type: VARCHAR
+
+          - name: _INGESTED_AT
+            data_type: TIMESTAMP_NTZ
+
+          - name: ID_CICLISTA_FK
+            data_type: VARCHAR
+
+          - name: ID_COMPETICION_FK
+            data_type: VARCHAR
+
+          - name: ID_ETAPA_FK
+            data_type: VARCHAR
+
+          - name: ID_EQUIPO_FK
+            data_type: VARCHAR
+
+          - name: DORSAL
+            data_type: NUMBER
+
+          - name: POSICION_FINAL
+            data_type: NUMBER
+
+          - name: TIEMPO_TOTAL_SEG
+            data_type: NUMBER
+
+          - name: DIFERENCIA_SEG
+            data_type: NUMBER
+
+          - name: ABANDONO
+            data_type: BOOLEAN
+
+          - name: MOTIVO_ABANDONO
+            data_type: VARCHAR
+
+          - name: PUNTOS_UCI
+            data_type: NUMBER
+
+          - name: TEMPERATURA_C
+            data_type: NUMBER
+
+          - name: HUMEDAD_PCT
+            data_type: NUMBER
+
+          - name: VIENTO_KMH
+            data_type: NUMBER
+
+          - name: LLUVIA_MM
+            data_type: NUMBER
+
+          - name: CONDICION_METEO
+            data_type: VARCHAR
+
+          - name: TIPO_TERRENO
+            data_type: VARCHAR
+
+          - name: DISTANCIA_KM
+            data_type: NUMBER
+
+          - name: DESNIVEL_POS_M
+            data_type: NUMBER
+
+          - name: EFICIENCIA_ENERGETICA
+            data_type: NUMBER
+
+          - name: INDICE_PACING
+            data_type: NUMBER
+
+          - name: PENALIZACION_SEG
+            data_type: NUMBER
+
+          - name: CAIDAS_REPORTADAS
+            data_type: NUMBER
+
+          - name: BONIFICACION_SEG
+            data_type: NUMBER
+
+          - name: PORCENTAJE_COMPLETADO
+            data_type: NUMBER
+
+          - name: POSICION_TOP10
+            data_type: BOOLEAN
+      - name: SEGMENTO_TRAYECTO
+        columns:
+          - name: _ID
+            data_type: VARCHAR
+
+          - name: _SOURCE
+            data_type: VARCHAR
+
+          - name: _INGESTED_AT
+            data_type: TIMESTAMP_NTZ
+
+          - name: ID_TELEMETRIA_VUELTA_FK
+            data_type: VARCHAR
+
+          - name: NUMERO_SEGMENTO
+            data_type: NUMBER
+
+          - name: TIPO_SEGMENTO
+            data_type: VARCHAR
+
+          - name: TIEMPO_SEG
+            data_type: NUMBER
+
+          - name: DISTANCIA_M
+            data_type: NUMBER
+
+          - name: DESNIVEL_M
+            data_type: NUMBER
+
+          - name: POTENCIA_MEDIA_W
+            data_type: NUMBER
+
+          - name: FC_MEDIA_BPM
+            data_type: NUMBER
+
+          - name: VELOCIDAD_MEDIA_KMH
+            data_type: NUMBER
+
+          - name: ERRORES_LINEA
+            data_type: NUMBER
+
+          - name: FRENADAS_BRUSCAS
+            data_type: NUMBER
+      - name: TELEMETRIA_VUELTA
+        columns:
+        - name: _ID
+          data_type: VARCHAR
+
+        - name: _SOURCE
+          data_type: VARCHAR
+
+        - name: _INGESTED_AT
+          data_type: TIMESTAMP_NTZ
+
+        - name: ID_RESULTADO_FK
+          data_type: VARCHAR
+
+        - name: NUMERO_VUELTA
+          data_type: NUMBER
+
+        - name: TIEMPO_VUELTA_SEG
+          data_type: NUMBER
+
+        - name: VELOCIDAD_MEDIA_KMH
+          data_type: NUMBER
+
+        - name: VELOCIDAD_MAX_KMH
+          data_type: NUMBER
+
+        - name: POTENCIA_MEDIA_W
+          data_type: NUMBER
+
+        - name: POTENCIA_MAX_W
+          data_type: NUMBER
+
+        - name: POTENCIA_NORM_W
+          data_type: NUMBER
+
+        - name: CADENCIA_MEDIA_RPM
+          data_type: NUMBER
+
+        - name: FC_MEDIA_BPM
+          data_type: NUMBER
+
+        - name: FC_MAX_BPM
+          data_type: NUMBER
+
+        - name: ALTITUD_GANADA_M
+          data_type: NUMBER
+
+        - name: DISTANCIA_REAL_KM
+          data_type: NUMBER
+
+        - name: TSS_VUELTA
+          data_type: NUMBER
+
+        - name: PCT_ZONA_5
+          data_type: NUMBER
+
+        - name: EFICIENCIA_PEDALEO_PCT
+          data_type: NUMBER
+
+        - name: TEMPERATURA_EXTERIOR_C
+          data_type: NUMBER
+
+        - name: VARIABILIDAD_POTENCIA_VI
+          data_type: NUMBER
+
+        - name: VELOCIDAD_BAJADA_MAX_KMH
+          data_type: NUMBER
+
+        - name: TIEMPO_EN_AIRE_MS
+          data_type: NUMBER
+
+        - name: DESNIVELADO_POSITIVO_VUELTA_M
+          data_type: NUMBER
+
+        - name: PERDIDA_TIEMPO_TECNICO_SEG
+          data_type: NUMBER
+
