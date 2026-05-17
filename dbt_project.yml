@@ -41,12 +41,12 @@ models:
   Proyecto_ciclismo:
     raw:
       +materialized: view
-      +database: "DEV_BRONZE_DB"
-
+      +database: "PRO_BRONZE_DB"
+#{{ env_var('DBT_ENVIRONMENTS', 'FAIL') }}
     staging:
       +materialized: table
-      +database: "DEV_SILVER_DB"
+      +database: "PRO_SILVER_DB"
 
     marts:
       +materialized: table
-      +database: "DEV_GOLD_DB"
+      +database: "PRO_GOLD_DB"
