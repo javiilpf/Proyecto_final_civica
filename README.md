@@ -1,17 +1,17 @@
-# 🚴 Proyecto Final Cívica — Data Engineering & Analytics de Ciclismo
+# 🚴 Proyecto Final Cívica — Data Engineering de Ciclismo
 
-Proyecto de ingeniería de datos orientado al análisis de competiciones ciclistas profesionales. Construido con **dbt + Snowflake + Power BI**, implementando una arquitectura medallion (Bronze → Silver → Gold) para transformar data raw de telemetría, etapas y ciclistas en insights listos para visualizar.
+Proyecto de ingeniería de datos orientado a competiciones ciclistas profesionales. Construido con **dbt + Snowflake + Power BI**, implementando una arquitectura medallion (Bronze → Silver → Gold) para transformar data raw de telemetría, etapas y ciclistas en insights listos para visualizar.
 
 ---
 
 ## 🏗️ Arquitectura
 
 ```
-PRO_BRONZE_DB          PRO_SILVER_DB          PRO_GOLD_DB
-─────────────          ─────────────          ───────────
-Raw / Views      →     Staging / Tables   →   Marts / Tables
-(Fuentes)              (Limpieza y        (Dimensiones y
-                        validaciones)      Facts para PBI)
+PRO_BRONZE_DB (RAW)                 PRO_SILVER_DB (STAGING)                 PRO_GOLD_DB (MARTS)
+───────────────────                 ───────────────────────                 ──────────────────────
+Raw / Views             →           Tables (NORMALIZADO)          →         TABLES / INCREMENTALES
+(Fuentes)                           (Limpieza y                             (Dimensiones y Facts para PBI)
+                                    validaciones)                           DESNORMALIZADO
 ```
 
 ### Capas del modelo
@@ -19,8 +19,8 @@ Raw / Views      →     Staging / Tables   →   Marts / Tables
 | Capa | Base de datos | Materialización | Descripción |
 |---|---|---|---|
 | **Raw** | `PRO_BRONZE_DB` | View | Datos en bruto sin transformar |
-| **Staging** | `PRO_SILVER_DB` | Table | Limpieza, tipado y validaciones |
-| **Marts** | `PRO_GOLD_DB` | Table | Modelo estrella listo para Power BI |
+| **Staging** | `PRO_SILVER_DB` | Table | Normalizado de datos, limpieza, tipado y validaciones |
+| **Marts** | `PRO_GOLD_DB` | Table | Modelo estrella listo para el análisis de datos |
 
 ---
 
@@ -30,22 +30,19 @@ Raw / Views      →     Staging / Tables   →   Marts / Tables
 Proyecto_final_civica/
 │
 ├── models/
-│   ├── raw/              # Vistas sobre las fuentes originales
-│   ├── staging/          # Modelos de limpieza y estandarización
-│   └── marts/            # Dimensiones y Facts (Gold)
+│   ├── raw/              # Vistas sobre las fuentes originales (Sin modelar, creada para mostrar el linaje en dbt completo)
+│   ├── staging/          # Modelos de limpieza y estandarización para normalizar los datos y tener relaciones en las tablas
+│   └── marts/            # Dimensiones y Facts desnormalizando la data de stagging según los casos de uso (Gold)
 │       ├── dim_ciclista
 │       ├── dim_etapa
 │       ├── dim_competicion
 │       ├── dim_categoria_uci
 │       └── fact_telemetria_vuelta
 │
-├── tests/                # Tests de auditoría personalizados
-├── snapshots/            # SCD Tipo 2 para dimensiones que cambian
+├── tests/                # Validación de ciertos datos
+├── snapshots/            # SCD Tipo 2 para dimensiones
 ├── seeds/                # Datos de referencia estáticos
-├── macros/               # Macros reutilizables
-├── analyses/             # Análisis ad-hoc
-│
-├── dbt_project.yml
+├── dbt_project.yml       # Configuración proyecto
 └── packages.yml
 ```
 
