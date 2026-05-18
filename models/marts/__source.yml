@@ -85,6 +85,11 @@ sources:
           - name: PATROCINADOR_LOCAL
             data_type: VARCHAR
 
+          - name: DISCIPLINA  
+            data_type: VARCHAR
+          
+          - name: TIPO
+            data_type: VARCHAR
       - name: DIM_ETAPA
         columns:
           - name: SK_ETAPA
@@ -203,3 +208,6 @@ sources:
 
           - name: TSS
             data_type: FLOAT
+
+          - name: ABANDONO
+            data_type: BOOLEAN
