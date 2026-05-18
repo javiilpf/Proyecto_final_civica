@@ -79,17 +79,9 @@ dbt build --full-refresh
 
 ---
 
-## 🚀 Cómo ejecutar el proyecto
-
-### Requisitos previos
-- dbt Core instalado (`pip install dbt-snowflake`)
-- Acceso a Snowflake con perfil configurado en `~/.dbt/profiles.yml`
-
-### Comandos principales
+### 🚀 Comandos principales
 
 ```bash
-# Instalar dependencias
-dbt deps
 
 # Compilar modelos (sin ejecutar)
 dbt compile
@@ -125,21 +117,117 @@ dbt run --select +dim_ciclista
 
 ---
 
+## 📊 Modelo de datos (RAW / BRONZE)
+```
+                              ┌────────────────────┐
+                              │    RAW FUENTES     │
+                              └─────────┬──────────┘
+                                        │
+        ┌───────────────────────────────┼───────────────────────────────┐
+        │                               │                               │
+ ┌──────▼───────┐              ┌────────▼───────┐              ┌────────▼────────┐
+ │ stg_ciclista │              │   stg_equipo   │              │ stg_competicion │
+ └──────────────┘              └────────────────┘              └─────────────────┘
+
+ ┌───────────────┐             ┌─────────────────┐             ┌──────────────────┐
+ │   stg_etapa   │             │  stg_resultado  │             │ stg_forma_fisica │
+ └───────────────┘             └─────────────────┘             └──────────────────┘
+
+ ┌────────────────────────┐    ┌───────────────────────┐      ┌─────────────────────────┐
+ │ stg_telemetria_vuelta  │    │ stg_segmento_trayecto │      │ stg_inscripcion_popular │
+ └────────────────────────┘    └───────────────────────┘      └─────────────────────────┘
+                          
+```
+---
+
+## 📊 Modelo de datos (SILVER)
+```
+                                              ┌──────┐
+                                              │ PAIS │
+                                              └───┬──┘
+                                                  │
+                        ┌─────────────────────────┼─────────────────────────┐
+                        │                         │                         │
+                  ┌─────▼────┐                ┌───▼────┐             ┌──────▼──────┐
+                  │ CICLISTA │                │ EQUIPO │             │ COMPETICION │
+                  └─────┬────┘                └───┬────┘             └──────┬──────┘
+                        │                         │                         │
+                        │                         │                         │
+                        │                ┌────────▼────────┐                │
+                        │                │ CATEGORIA_UCI   │                │
+                        │                └─────────────────┘                │
+                        │                                                   │
+                        │                ┌─────────────────┐                │
+                        │                │NIVEL_COMPETICION│                │
+                        │                └─────────────────┘                │
+                        │                                                   │
+                        │                ┌─────────────────┐                │
+                        │                │TIPO_COMPETICION │                │
+                        │                └─────────────────┘                │
+                        │                                                   │
+                        │                                                   │
+                ┌───────▼──────┐                                        ┌───▼───┐
+                │ FORMA_FISICA │                                        │ ETAPA │
+                └──────────────┘                                        └───┬───┘
+                                                                            │
+                                                                     ┌──────▼───────┐
+                                                                     │ TIPO_TERRENO │
+                                                                     └──────────────┘
+
+             ┌───────────┐
+             │ RESULTADO │
+             └─────┬─────┘
+                   │
+        ┌──────────┬────────────┬────────────┐
+        │          │            │            │
+  ┌──────▼───┐ ┌───▼───┐ ┌──────▼──────┐ ┌───▼────┐
+  │ CICLISTA │ │ ETAPA │ │ COMPETICION │ │ EQUIPO │
+  └──────────┘ └───────┘ └─────────────┘ └────────┘
+
+
+                           ┌───────────────────┐
+                           │ TELEMETRIA_VUELTA │
+                           └────────┬──────────┘
+                                    │
+                               ┌────▼──────┐
+                               │ RESULTADO │
+                               └────┬──────┘
+                                    │
+                         ┌───────────▼─────────┐
+                        │   SEGMENTO_TRAYECTO │
+                        └───────────┬─────────┘
+                                    │
+                           ┌────────▼────────┐
+                           │ TIPO_SEGMENTO   │
+                           └─────────────────┘
+
+
+                     ┌────────────────────────────┐
+                     │   INSCRIPCION_POPULAR      │
+                     └──────────┬─────────────────┘
+                                │
+               ┌────────────────┼────────────────┐
+               │                │                │
+        ┌──────▼─────┐   ┌──────▼──────┐  ┌──────▼──────┐
+        │ CICLISTA   │   │ COMPETICION │  │ RESULTADO   │
+        └────────────┘   └─────────────┘  └─────────────┘
+```
+---
+
 ## 📊 Modelo de datos (Gold)
 
 El modelo estrella en Gold está diseñado para ser consumido directamente por Power BI:
 
 ```
-                    ┌──────────────────┐
-                    │  FACT_TELEMETRIA │
-                    │     _VUELTA      │
-                    └────────┬─────────┘
+                  ┌────────────────────────┐
+                  │ FACT_TELEMETRIA_VUELTA │
+                  └──────────┬─────────────┘
                              │
           ┌──────────────────┼──────────────────┐
           │                  │                  │
-   ┌──────▼──────┐   ┌───────▼──────┐   ┌──────▼──────┐
+   ┌──────▼──────┐   ┌───────▼──────┐   ┌──────▼────────┐
    │DIM_CICLISTA │   │  DIM_ETAPA   │   │DIM_COMPETICION│
-   └─────────────┘   └──────────────┘   └─────────────┘
+   └─────────────┘   └──────────────┘   └───────────────┘
                              │
                     ┌────────▼────────┐
                     │DIM_CATEGORIA_UCI│
@@ -150,4 +238,4 @@ El modelo estrella en Gold está diseñado para ser consumido directamente por P
 
 ## 👤 Autor
 
-**Javier** — Proyecto Final Cívica 2024/2025
+**Javier Avilés** — Proyecto Final Cívica 2026
