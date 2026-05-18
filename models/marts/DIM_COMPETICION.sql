@@ -1,6 +1,6 @@
 {{
     config(
-        materialized='incremental',
+        materialized='table',
         unique_key='SK_COMPETICION',
         pre_hook="CREATE SEQUENCE IF NOT EXISTS DEV_GOLD_DB.GOLD.SEQ_DIM_COMPETICION START 1 INCREMENT 1"
     )
