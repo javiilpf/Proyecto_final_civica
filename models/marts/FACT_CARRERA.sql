@@ -14,10 +14,6 @@ etapa as (
     select id_etapa, _id_bronze, fecha from {{ ref('ETAPA') }}
 ),
 
-equipo as (
-    select id_equipo, nombre from {{ ref('EQUIPO') }}
-),
-
 telemetria as (
     select
         id_resultado,
@@ -92,7 +88,6 @@ final as (
         de.SK_ETAPA                                 as SK_ETAPA,
         dco.SK_COMPETICION                          as SK_COMPETICION,
         dt.SK_FECHA                                 as SK_FECHA,
-        eq.nombre                                   as NOMBRE_EQUIPO,
         r.puntos_uci                                as PUNTOS_UCI,
         r.posicion_final                            as POSICION,
         r.tiempo_total_seg                          as TIEMPO_SEG,
@@ -109,8 +104,6 @@ final as (
         r.hrv_ms                                    as HRV,
         t.tss                                       as TSS
     from resultado_con_forma r
-    left join equipo eq
-        on r.id_equipo = eq.id_equipo
     left join telemetria t
         on r.id_resultado = t.id_resultado
     left join dim_ciclista dc

@@ -3,18 +3,27 @@
 {{
     config(
         target_schema='SNAPSHOTS',
-        target_database=env_var('DBT_ENVIRONMENTS', 'FAIL') ~ '_SILVER_DB',
-        unique_key='id_equipo',
+        target_database=env_var('DBT_ENVIRONMENTS', 'FAIL') ~ '_BRONZE_DB',
+        unique_key='_ID',
         strategy='check',
         check_cols=[
-            'id_categoria_uci',
-            'presupuesto_eur',
-            'director_tecnico',
-            'activo'
+             '_ID',
+            '_SOURCE',
+            '_INGESTED_AT',
+            'NOMBRE',
+            'PAIS',
+            'PRESUPUESTO_EUR',
+            'DIRECTOR_TECNICO',
+            'ANIO_FUNDACION',
+            'CATEGORIA_UCI',
+            'DISCIPLINA',
+            'PATROCINADOR_PPAL',
+            'ACTIVO'
+
         ]
     )
 }}
 
-select * from {{ ref('EQUIPO') }}
+select * from {{ ref('stg_equipo') }}
 
 {% endsnapshot %}
