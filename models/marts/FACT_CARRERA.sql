@@ -14,6 +14,10 @@ etapa as (
     select id_etapa, _id_bronze, fecha from {{ ref('ETAPA') }}
 ),
 
+equipo as (
+    select id_equipo, nombre from {{ ref('EQUIPO') }}
+),
+
 telemetria as (
     select
         id_resultado,
@@ -58,12 +62,15 @@ resultado_con_forma as (
         r.id_ciclista,
         r.id_competicion,
         r.id_etapa,
+        r.id_equipo,
+        r.puntos_uci,
         r.posicion_final,
         r.tiempo_total_seg,
         r.eficiencia_energetica,
         r.indice_pacing,
         r.penalizacion_seg,
         r.caidas_reportadas,
+        r.abandono,
         e.fecha,
         f.ctl_carga_cronica,
         f.atl_carga_aguda,
@@ -85,12 +92,15 @@ final as (
         de.SK_ETAPA                                 as SK_ETAPA,
         dco.SK_COMPETICION                          as SK_COMPETICION,
         dt.SK_FECHA                                 as SK_FECHA,
+        eq.nombre                                   as NOMBRE_EQUIPO,
+        r.puntos_uci                                as PUNTOS_UCI,
         r.posicion_final                            as POSICION,
         r.tiempo_total_seg                          as TIEMPO_SEG,
         r.eficiencia_energetica                     as EFICIENCIA_ENERGETICA,
         r.indice_pacing                             as INDICE_PACING,
         r.penalizacion_seg                          as PENALIZACION_SEG,
         r.caidas_reportadas                         as CAIDAS,
+        r.abandono                                  as ABANDONO,
         t.potencia_media                            as POTENCIA_MEDIA,
         t.cadencia_media                            as CADENCIA_MEDIA,
         r.ctl_carga_cronica                         as CTL,
@@ -99,6 +109,8 @@ final as (
         r.hrv_ms                                    as HRV,
         t.tss                                       as TSS
     from resultado_con_forma r
+    left join equipo eq
+        on r.id_equipo = eq.id_equipo
     left join telemetria t
         on r.id_resultado = t.id_resultado
     left join dim_ciclista dc

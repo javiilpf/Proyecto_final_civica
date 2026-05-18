@@ -18,6 +18,13 @@ nivel_competicion as (
     select id_nivel, codigo from {{ ref('NIVEL_COMPETICION') }}
 ),
 
+tipo_competicion as (SELECT 
+    id_tipo,
+    codigo,
+    disciplina 
+    FROM {{ ref('TIPO_COMPETICION') }}
+),
+
 final as (
     select
         DEV_GOLD_DB.GOLD.SEQ_DIM_COMPETICION.NEXTVAL  as SK_COMPETICION,
@@ -32,12 +39,17 @@ final as (
         c.dificultad_tecnica                            as DIFICULTAD_TECNICA,
         c.valoracion_media_corredores                   as VALORACION_CORREDORES,
         c.transmision_online                            as TRANSMISION_ONLINE,
-        c.patrocinador_local                            as PATROCINADOR_LOCAL
+        c.patrocinador_local                            as PATROCINADOR_LOCAL,
+        tc.disciplina                                   as DISCIPLINA,
+        tc.codigo                                       as TIPO
     from competicion c
     left join pais p
         on c.id_pais = p.id_pais
     left join nivel_competicion n
         on c.id_nivel = n.id_nivel
+    left join tipo_competicion tc
+    on c.id_tipo = tc.id_tipo
+
 
     {% if is_incremental() %}
     where c.id_competicion not in (select ID_COMPETICION from {{ this }})
