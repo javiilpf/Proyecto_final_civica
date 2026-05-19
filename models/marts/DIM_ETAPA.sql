@@ -2,6 +2,7 @@
     config(
         materialized='incremental',
         unique_key='SK_ETAPA',
+        incremental_strategy='merge',
         pre_hook="CREATE SEQUENCE IF NOT EXISTS DEV_GOLD_DB.GOLD.SEQ_DIM_ETAPA START 1 INCREMENT 1"
     )
 }}

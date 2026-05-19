@@ -2,7 +2,8 @@
     config(
         materialized='incremental',
         unique_key='SK_FECHA',
-        pre_hook="CREATE SEQUENCE IF NOT EXISTS DEV_GOLD_DB.GOLD.SEQ_DIM_TIEMPO START 1 INCREMENT 1"
+        pre_hook="CREATE SEQUENCE IF NOT EXISTS DEV_GOLD_DB.GOLD.SEQ_DIM_TIEMPO START 1 INCREMENT 1",
+        incremental_strategy='merge'
     )
 }}
 
