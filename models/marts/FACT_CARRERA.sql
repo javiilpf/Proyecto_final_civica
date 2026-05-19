@@ -113,7 +113,7 @@ final as (
     left join dim_competicion dco
         on r.id_competicion = dco.ID_COMPETICION
     left join dim_tiempo dt
-        on r.fecha = dt.FECHA
+        on CAST(r.fecha AS DATE) = dt.FECHA
 
     {% if is_incremental() %}
     where r._id_bronze not in (select ID_BRONZE from {{ this }})
