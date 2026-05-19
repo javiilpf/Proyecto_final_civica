@@ -2,6 +2,7 @@
     config(
         materialized='incremental',
         unique_key='SK_FACT',
+        incremental_strategy='merge',
         pre_hook="CREATE SEQUENCE IF NOT EXISTS DEV_GOLD_DB.GOLD.SEQ_FACT_CARRERA START 1 INCREMENT 1"
     )
 }}
