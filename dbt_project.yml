@@ -40,7 +40,7 @@ models:
   +transient: false
   Cycling_proyect:
     raw:
-      +materialized: table
+      +materialized: view
       +database: "{{ env_var('DBT_ENVIRONMENTS', 'FAIL') }}_BRONZE_DB"
       +schema: RAW
     staging:
