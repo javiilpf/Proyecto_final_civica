@@ -1,8 +1,6 @@
 {{
     config(
-        materialized='incremental',
-        unique_key='SK_ETAPA',
-        incremental_strategy='merge',
+        materialized='table',
         pre_hook="CREATE SEQUENCE IF NOT EXISTS DEV_GOLD_DB.GOLD.SEQ_DIM_ETAPA START 1 INCREMENT 1"
     )
 }}
@@ -30,10 +28,6 @@ final as (
     from etapa e
     left join tipo_terreno tt
         on e.id_superficie = tt.id_terreno
-
-    {% if is_incremental() %}
-    where e.id_etapa not in (select ID_ETAPA from {{ this }})
-    {% endif %}
 )
 
 select * from final

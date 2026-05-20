@@ -1,7 +1,6 @@
 {{
     config(
         materialized='table',
-        unique_key='ID_CICLISTA',
         pre_hook="CREATE SEQUENCE IF NOT EXISTS DEV_GOLD_DB.GOLD.SEQ_DIM_CICLISTA START 1 INCREMENT 1"
     )
 }}
@@ -65,14 +64,6 @@ final as (
     left join equipo eq
         on c.id_equipo = eq.id_equipo
 
-    {% if is_incremental() %}
-
-    where c.id_ciclista not in (
-        select ID_CICLISTA
-        from {{ this }}
-    )
-
-    {% endif %}
 )
 
 select *
