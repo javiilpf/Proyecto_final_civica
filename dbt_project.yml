@@ -40,10 +40,9 @@ models:
   +transient: false
   Proyecto_ciclismo:
     raw:
-      +materialized: view
+      +materialized: table
       +database: "{{ env_var('DBT_ENVIRONMENTS', 'FAIL') }}_BRONZE_DB"
       +schema: RAW
-#{{ env_var('DBT_ENVIRONMENTS', 'FAIL') }}
     staging:
       +materialized: table
       +database: "{{ env_var('DBT_ENVIRONMENTS', 'FAIL') }}_SILVER_DB"

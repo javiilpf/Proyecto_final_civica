@@ -1,10 +1,10 @@
 version: 2
 
 sources:
-  - name: RAW
-    database: "DEV_BRONZE_DB"
-    schema: raw
-    tables:
+    - name: RAW
+      database: "{{ env_var('DBT_ENVIRONMENTS', 'DEV') }}_BRONZE_DB"
+      schema: raw
+      tables:
       - name: CICLISTA
         columns:
           - name: ID 
