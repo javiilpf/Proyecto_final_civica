@@ -1,7 +1,6 @@
 {{
     config(
         materialized='table',
-        unique_key='SK_COMPETICION',
         pre_hook="CREATE SEQUENCE IF NOT EXISTS DEV_GOLD_DB.GOLD.SEQ_DIM_COMPETICION START 1 INCREMENT 1"
     )
 }}
@@ -51,9 +50,6 @@ final as (
     on c.id_tipo = tc.id_tipo
 
 
-    {% if is_incremental() %}
-    where c.id_competicion not in (select ID_COMPETICION from {{ this }})
-    {% endif %}
 )
 
 select * from final

@@ -1,9 +1,7 @@
 {{
     config(
-        materialized='incremental',
-        unique_key='SK_FECHA',
+        materialized='table',
         pre_hook="CREATE SEQUENCE IF NOT EXISTS DEV_GOLD_DB.GOLD.SEQ_DIM_TIEMPO START 1 INCREMENT 1",
-        incremental_strategy='merge'
     )
 }}
 
@@ -26,10 +24,6 @@ with fechas_raw as (
 fechas_nuevas as (
     select distinct fecha::date as fecha
     from fechas_raw
-
-    {% if is_incremental() %}
-    where fecha::date not in (select FECHA from {{ this }})
-    {% endif %}
 ),
 
 final as (
