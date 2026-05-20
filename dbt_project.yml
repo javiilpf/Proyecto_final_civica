@@ -1,7 +1,7 @@
 # Name your project! Project names should contain only lowercase characters
 # and underscores. A good package name should reflect your organization's
 # name or the intended use of these models
-name: 'Proyecto_ciclismo'
+name: 'Cycling_proyect'
 version: '1.0.0'
 config-version: 2
 
@@ -38,7 +38,7 @@ clean-targets:         # directories to be removed by `dbt clean`
 
 models:
   +transient: false
-  Proyecto_ciclismo:
+  Cycling_proyect:
     raw:
       +materialized: table
       +database: "{{ env_var('DBT_ENVIRONMENTS', 'FAIL') }}_BRONZE_DB"
