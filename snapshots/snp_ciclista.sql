@@ -7,10 +7,6 @@
         unique_key='_ID',
         strategy='check',
         check_cols=[
-                '_ID',
-                '_SOURCE',
-                '_INGESTED_AT',
-                'ID_EQUIPO_FK',
                 'NOMBRE',
                 'APELLIDOS',
                 'FECHA_NACIMIENTO',
@@ -22,7 +18,6 @@
                 'ACTIVO',
                 'GENERO',
                 'CATEGORIA',
-                'EQUIPO_NOMBRE',
                 'PAIS_RESIDENCIA',
                 'BICI_MARCA',
                 'BICI_MODELO',
