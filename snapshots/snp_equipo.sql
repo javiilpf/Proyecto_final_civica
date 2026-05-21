@@ -7,9 +7,6 @@
         unique_key='_ID',
         strategy='check',
         check_cols=[
-             '_ID',
-            '_SOURCE',
-            '_INGESTED_AT',
             'NOMBRE',
             'PAIS',
             'PRESUPUESTO_EUR',
